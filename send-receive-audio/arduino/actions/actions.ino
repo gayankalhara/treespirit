@@ -8,27 +8,20 @@ RF24Audio rfAudio(radio,1); // Set up the audio using the radio, and set to radi
 
 void setup() {      
   Serial.begin(115200);   // Enable Arduino serial library
-  
-  printf_begin();               // Radio library uses printf to output debug info  
   radio.begin();                // Must start the radio here, only if we want to print debug info
+  printf_begin();               // Radio library uses printf to output debug info  
+  radio.enableDynamicPayloads();
+  radio.setChannel(1);
+  radio.setDataRate(RF24_2MBPS);
+  radio.setAutoAck(0);
+  radio.setCRCLength(RF24_CRC_16);
+  radio.setPALevel(RF24_PA_MAX);
+  radio.powerUp();
   radio.printDetails();         // Print the info
   rfAudio.begin();    // Start up the radio and audio libararies
+  rfAudio.transmit();
 }
 
 void loop() {
-    if(Serial.available()) { // Receive and analyze incoming serial data
-        switch(Serial.read()) {
-            case 'r': rfAudio.transmit();
-              Serial.print("done");
-              break; // Send an r or an s over serial to control playback
-            case 's': rfAudio.receive();
-              break;
-            case '=': rfAudio.volume(1);
-              break; // Control volume by sending = or - over serial
-            case '-': rfAudio.volume(0);
-              break;
-        }
-    }
- 
-    delay(1000);
+
 }
