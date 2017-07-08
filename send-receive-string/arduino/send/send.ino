@@ -1,29 +1,30 @@
 #include <SPI.h>
 #include "RF24.h"
+#include "printf.h"
 
 RF24 radio(7,8);
 int count = 0;
 
-const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0x7365727631LL };
+byte address[] = { 0xCC, 0xCE, 0xCC, 0xCE, 0xCC };
 
 void setup() {
- Serial.begin(9600);
-  //CONFIGURE RADIO
+  Serial.begin(9600);
+  printf_begin();
   radio.begin();
-  // Enable this seems to work better
   radio.enableDynamicPayloads();
   radio.setDataRate(RF24_2MBPS);
+  radio.setCRCLength(RF24_CRC_16);
   radio.setPALevel(RF24_PA_MAX);
-  radio.setChannel(0x76);
-  
-  radio.openWritingPipe(pipes[0]);
+  radio.setChannel(95);
+  radio.openWritingPipe(address);
   radio.powerUp();
+  radio.printDetails();
 }
 
 void loop() {
   count++;
   
-  // Define 
+  // Define
   String str = "Sending Packet: " + String(count); 
 
   Serial.println(str);
@@ -38,5 +39,6 @@ void loop() {
   str.toCharArray(char_array, str_len);
 
   radio.write(char_array, sizeof(char_array));
+  
   delay(100);
 }
