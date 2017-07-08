@@ -5,29 +5,29 @@ import spidev
 
 GPIO.setmode(GPIO.BCM)
 
-pipes = [[0xE8, 0xE8, 0xF0, 0xF0, 0xE1], [0xF0, 0xF0, 0xF0, 0xF0, 0xE1]]
+pipe = [0xCC, 0xCE, 0xCC, 0xCE, 0xCC]
 
 radio = NRF24(GPIO, spidev.SpiDev())
-radio.begin(0, 17)
-
-radio.setPayloadSize(32)
-radio.setChannel(0x76)
-radio.setDataRate(NRF24.BR_2MBPS)
+radio.begin(0, 8)
+radio.setChannel(95)
 radio.setPALevel(NRF24.PA_MAX)
-radio.enableDynamicPayloads()
-radio.openReadingPipe(1, pipes[1])
+radio.setDataRate(NRF24.BR_2MBPS)
+radio.setAutoAck(True)
+radio.setCRCLength(NRF24.CRC_16)
+radio.openReadingPipe(1, pipe)
 radio.printDetails()
+radio.enableDynamicPayloads()
+radio.startListening()
 
 while(1):
-    radio.startListening()
     while not radio.available(0):
-            time.sleep(1000/1000000.0)
-            # print("Timed out.")
-            break
+        time.sleep(1000/1000000.0)
+        print("Timed out.")
+        break
 
     receivedMessage = []
+    radio.setPayloadSize(radio.getDynamicPayloadSize())
     radio.read(receivedMessage, radio.getDynamicPayloadSize())
-    #print("Received: {}".format(receivedMessage))
     string = ""
     for n in receivedMessage:
         # Decode into standard unicode set
@@ -36,5 +36,4 @@ while(1):
     if (string != ""):
         print(format(string))
 
-    #radio.stopListening()
     time.sleep(0.05)
