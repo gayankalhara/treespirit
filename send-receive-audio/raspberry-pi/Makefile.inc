@@ -5,7 +5,7 @@ CPUFLAGS=-march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
 CFLAGS=-march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -Ofast -Wall -pthread 
 PREFIX=/usr/local
 REMOTE_PREFIX=/usr/local
-LIB=rf24
+LIB=rf24 wavfile.c
 LIBNAME=librf24.so.1.3.0
 LIB_VERSION=1.3.0
 LIBSYMLINKS=librf24.so.1.3 librf24.so.1 librf24.so

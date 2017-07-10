@@ -1,5 +1,8 @@
 #include <iostream>
 #include <RF24/RF24.h>
+#include <string>
+
+#include "wavfile.h"
 
 using namespace std;
 
@@ -19,20 +22,39 @@ int main(int argc, char** argv){
 	radio.openReadingPipe(1, address);
 	radio.printDetails();
 	radio.startListening();
+	
 
-	while(1) { 
+	int count = 0;
+	const int samples = 20000 * 60 * 2;
+	uint8_t soundClip[samples];
+
+	while(count < samples) { 
 		if(radio.available()) {
 			int payloadSize = radio.getDynamicPayloadSize(); // Get Dynamic Payload Size
 			cout << endl << "Payload Size: " << payloadSize << endl;
-			signed char audioData[payloadSize];
+			uint8_t audioData[payloadSize];
 
 			radio.read(&audioData, payloadSize);
 
 			for (int i=0; i < payloadSize; i++) {
-				cout << audioData[i];
+				cout<<audioData[i];
+				soundClip[count++] = audioData[i];
 			}
 
-			cout << endl;
+			cout << endl;		
+		} else {
+
 		}
 	}
+
+	FILE * f = wavfile_open("soundfile.wav");
+			if(!f) {
+				// printf("couldn't open sound.wav for writing: %s",strerror(errno));
+				cout<<"couldn't open sound.wav for writing"<<endl;
+				return 1;
+			}
+		
+			wavfile_write(f,soundClip,samples);
+
+			wavfile_close(f);
 }
