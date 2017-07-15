@@ -193,3 +193,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Generated Audio Files
+audio_*.wav
