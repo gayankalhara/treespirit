@@ -1,6 +1,3 @@
-
-
-
 #if ARDUINO < 100
 #include <WProgram.h>
 #else
@@ -25,6 +22,7 @@ char volMod = -1;
 byte bitPos = 0, bytePos = 25;
 byte bytH;
 byte radioIdentifier;
+byte channelIdentifier;
 
 #if defined (tenBit)
   unsigned int sampl;
@@ -43,9 +41,10 @@ const byte broadcastVal = 255; // The value for broadcasting to all nodes using 
 /*****************************************************************************************************************************/
 /************************************************* General Section ***********************************************************/
 
-RF24Audio::RF24Audio(RF24& _radio, byte radioNum): radio(_radio){
+RF24Audio::RF24Audio(RF24& _radio, byte radioNum, byte channelNum): radio(_radio){
 	radi = radio;
 	radioIdentifier = radioNum;
+  channelIdentifier = channelNum;
 }
 
 void RF24Audio::begin(){
@@ -69,9 +68,7 @@ void RF24Audio::begin(){
     #endif
   }
 
-
-
-  radio.setChannel(1);                 // Set RF channel to 1
+  radio.setChannel(channelIdentifier); // Set RF channel from constructor
   radio.setAutoAck(0);                 // Disable ACKnowledgement packets
   radio.setDataRate(RF_SPEED);         // Set data rate as specified in user options
   radio.setCRCLength(RF24_CRC_8);

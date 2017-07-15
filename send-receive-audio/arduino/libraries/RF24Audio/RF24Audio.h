@@ -33,10 +33,11 @@ public:
    *	RF24Audio rfAudio(radio,0);		// Initialize the audio driver
    * @endcode
    *
-   * @param _radio   The underlying radio driver instance
-   * @param radioNum The radio identifier
+   * @param _radio      The underlying radio driver instance
+   * @param radioNum    The radio identifier
+   * @param channelNum  The channel identifier
    */
-	RF24Audio(RF24& _radio, byte radioNum);
+	RF24Audio(RF24& _radio, byte radioNum, byte channelNum);
 
   /**
    * Initialize the radio and audio library

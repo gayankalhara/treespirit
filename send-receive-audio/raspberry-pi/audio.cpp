@@ -1,6 +1,7 @@
 #include <iostream>
 #include <RF24/RF24.h>
 #include <string>
+#include <sstream>
 #include <ctime>
 
 #include "wavfile.h"
@@ -15,7 +16,7 @@ const uint64_t address = { 0x544d52687CLL };
 int main(int argc, char** argv){
 	radio.begin(); 
 
-	radio.setChannel(1);
+	radio.setChannel(3);
 	radio.setPALevel(RF24_PA_MAX);
 	radio.setDataRate(RF24_2MBPS);
 	radio.setAutoAck(0);
@@ -25,7 +26,7 @@ int main(int argc, char** argv){
 	radio.startListening();
 	
 	int count = 0;
-	const int samples = 44000 * 60 * 0.5;
+	const int samples = 44000 * 10; // 10 Seconds
 	uint8_t soundClip[samples];
 
 	clock_t start;
@@ -36,7 +37,7 @@ int main(int argc, char** argv){
 	while(count <= samples) { 
 		if(radio.available()) {
 			duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-			int payloadSize = radio.getDynamicPayloadSize(); // Get Dynamic Payload Size
+			int payloadSize = 32;
 
 			cout << "Time: " << duration << " s" << endl;
 			cout << "Sample ID: " << count << "/" << samples << endl;
@@ -52,17 +53,21 @@ int main(int argc, char** argv){
 
 			cout << endl << endl;		
 		}
-
-		
 	}
 
-	FILE * f = wavfile_open("soundfile.wav");
-			if(!f) {
-				cout << "Couldn't open sound.wav for writing!" << endl;
-				return 1;
-			}
-		
-			wavfile_write(f,soundClip,samples);
+	time_t unixTimestamp = time(0);
+	stringstream waveFileName;
+	waveFileName << "audio_n3_" << unixTimestamp << ".wav";
 
-			wavfile_close(f);
+	FILE * audioFile = wavfile_open(waveFileName.str().c_str());
+
+	if(audioFile) {
+		wavfile_write(audioFile, soundClip, samples);
+		wavfile_close(audioFile);
+		cout << "Audio File Generated: " << waveFileName.str() << endl;
+		return 0;
+	} else {
+		cout << "Couldn't open sound.wav for writing!" << endl;
+		return 1;
+	}
 }
