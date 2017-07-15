@@ -1,6 +1,7 @@
 #include <iostream>
 #include <RF24/RF24.h>
 #include <string>
+#include <ctime>
 
 #include "wavfile.h"
 
@@ -16,22 +17,30 @@ int main(int argc, char** argv){
 
 	radio.setChannel(1);
 	radio.setPALevel(RF24_PA_MAX);
-	radio.setDataRate(RF24_1MBPS);
+	radio.setDataRate(RF24_2MBPS);
 	radio.setAutoAck(0);
 	radio.setCRCLength(RF24_CRC_8);
 	radio.openReadingPipe(1, address);
 	radio.printDetails();
 	radio.startListening();
 	
-
 	int count = 0;
-	const int samples = 20000 * 60 * 2;
+	const int samples = 44000 * 60 * 0.5;
 	uint8_t soundClip[samples];
 
-	while(count < samples) { 
+	clock_t start;
+    double duration;
+
+    start = clock();
+
+	while(count <= samples) { 
 		if(radio.available()) {
+			duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
 			int payloadSize = radio.getDynamicPayloadSize(); // Get Dynamic Payload Size
-			cout << endl << "Payload Size: " << payloadSize << endl;
+
+			cout << "Time: " << duration << " s" << endl;
+			cout << "Sample ID: " << count << "/" << samples << endl;
+			cout << "Payload Size: " << payloadSize << endl;
 			uint8_t audioData[payloadSize];
 
 			radio.read(&audioData, payloadSize);
@@ -41,16 +50,15 @@ int main(int argc, char** argv){
 				soundClip[count++] = audioData[i];
 			}
 
-			cout << endl;		
-		} else {
-
+			cout << endl << endl;		
 		}
+
+		
 	}
 
 	FILE * f = wavfile_open("soundfile.wav");
 			if(!f) {
-				// printf("couldn't open sound.wav for writing: %s",strerror(errno));
-				cout<<"couldn't open sound.wav for writing"<<endl;
+				cout << "Couldn't open sound.wav for writing!" << endl;
 				return 1;
 			}
 		

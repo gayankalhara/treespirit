@@ -13,8 +13,8 @@ void setup() {
   radio.enableDynamicPayloads();
   radio.setChannel(1);
   radio.setDataRate(RF24_2MBPS);
-  radio.setAutoAck(0);
-  radio.setCRCLength(RF24_CRC_16);
+  radio.setAutoAck(1);
+  radio.setCRCLength(RF24_CRC_8);
   radio.setPALevel(RF24_PA_MAX);
   radio.powerUp();
   radio.printDetails();         // Print the info
