@@ -2,7 +2,7 @@ OS=LINUX
 SOC=BCM2836
 DRIVER=RPi
 CPUFLAGS=-march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
-CFLAGS=-march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -Ofast -Wall -pthread 
+CFLAGS=-march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -Ofast -Wall -std=c++11 -pthread
 PREFIX=/usr/local
 REMOTE_PREFIX=/usr/local
 LIB=rf24 wavfile.c

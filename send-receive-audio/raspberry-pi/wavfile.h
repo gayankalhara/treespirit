@@ -18,8 +18,6 @@ FILE * wavfile_open( const char *filename );
 void wavfile_write( FILE *file, uint8_t data[], int length );
 void wavfile_close( FILE * file );
 
-// #define WAVFILE_SAMPLES_PER_SECOND 44100
-
-#define WAVFILE_SAMPLES_PER_SECOND 20000
+#define WAVFILE_SAMPLES_PER_SECOND 11025
 
 #endif
